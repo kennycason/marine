@@ -13,5 +13,6 @@ Move Right: Right, D
 Move Up: Up, W
 Move Down: Down, S
 
+Enter: Reset
 
 <img src="https://raw.github.com/kennycason/marines/master/img/screenshots/screenshot1.png"/>

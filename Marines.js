@@ -39,19 +39,19 @@ function Marines() {
 		this.player.a.x = 0; 
 		this.player.a.y = 0;
 
-		if(this.keyboard.isKeyPressed(Keys.LEFT) 
+		if((this.keyboard.isKeyPressed(Keys.LEFT) || this.keyboard.isKeyPressed(Keys.A))
 			&& !this.level.collide(this.player, this.player.x - this.player.v.x - this.level.x, this.player.y - this.level.y)) {
 			this.player.a.x = -0.5;
 		}
-		if(this.keyboard.isKeyPressed(Keys.RIGHT) 
+		if((this.keyboard.isKeyPressed(Keys.RIGHT) || this.keyboard.isKeyPressed(Keys.D))
 			&& !this.level.collide(this.player, this.player.x + this.player.v.x- this.level.x, this.player.y - this.level.y)) {
 			this.player.a.x = 0.5;
 		}
-		if(this.keyboard.isKeyPressed(Keys.DOWN) 
+		if((this.keyboard.isKeyPressed(Keys.DOWN) || this.keyboard.isKeyPressed(Keys.S))
 			&& !this.level.collide(this.player, this.player.x - this.level.x, this.player.y + this.player.v.y - this.level.y)) {
 			this.player.a.y = 0.5;
 		}
-		if(this.keyboard.isKeyPressed(Keys.UP) 
+		if((this.keyboard.isKeyPressed(Keys.UP) || this.keyboard.isKeyPressed(Keys.W))
 			&& !this.level.collide(this.player, this.player.x - this.level.x, this.player.y - this.player.v.y - this.level.y)) {
 			this.player.a.y = -0.5;
 		}
