@@ -118,12 +118,16 @@ Level.prototype.drawBackground = function(screen) {
 
 Level.prototype.draw = function(screen) {
 	this.drawBackground(screen);
+
+	for(var i = 0; i < this.bullets.length; i++) {
+		this.bullets[i].draw(screen);
+	}
+
 	this.world.player.draw(screen);
 
 	for(var i = 0; i < this.enemies.length; i++) {
 		this.enemies[i].draw(screen);
 	}
-	$("#data").html(screen);
 	for(var i = 0; i < this.bullets.length; i++) {
 		this.bullets[i].draw(screen);
 	}
