@@ -55,6 +55,9 @@ function Color(r, g, b) {
 
 var Palette = {};
 Palette.BLACK = new Color(0,0,0);
+Palette.DARK_GRAY = new Color(0x33, 0x33, 0x33);
+Palette.GRAY = new Color(077, 0x77, 0x77);
+Palette.LIGHT_GRAY = new Color(0xaa, 0xaa, 0xaa);
 Palette.WHITE = new Color(0xff, 0xff, 0xff);
 Palette.RED = new Color(0xff, 0, 0);
 Palette.GREEN = new Color(0, 0xff, 0);

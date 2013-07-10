@@ -9,7 +9,7 @@ Weapon.prototype = new Entity();
 Weapon.prototype.constructor = Weapon;
 
 Weapon.prototype.distance = function() {
-	return Math.sqrt((this.x - this.orig.x) * (this.x - this.orig.x) + (this.y - this.orig.y) * (this.y - this.orig.y));
+	return Point.distance([this.x, this.y], [this.orig.x, this.orig.y]);
 }
 
 Weapon.prototype.draw = function(screen) {
@@ -92,5 +92,5 @@ Grenade.prototype.draw = function(screen) {
 
 
 Grenade.prototype.finish = function() {
-	this.world.explosions.push(new Explosion(this.world, this.x, this.y));
+	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
 }

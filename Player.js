@@ -21,8 +21,8 @@ function PlayerTank(world) {
 	this.gunTheta = 0;
 	this.initTheta = 0;
 
-	this.hp = 7;
-	this.hpm = 10
+	this.hp = 10;
+	this.hpm = 10;
 
 	$("#canvas").mousemove(function() {
 		that.pointGunToMouse();
@@ -46,22 +46,23 @@ PlayerTank.prototype.constructor = PlayerTank;
 PlayerTank.prototype.hit = function(damage) {
 	if(!this.invincible) {
 		this.invincible = true;
-		this.lastHitTime = new Date().getTime();
+		this.lastHitTime = Clock.time();
 		this.hp -= damage;
 		if(this.hp <= 0) {
 			window.location.reload();
 		}
 	} else {
-		if(new Date().getTime() - this.lastHitTime > 3000) {
+		if(Clock.time() - this.lastHitTime > 300) {
 			this.invincible = false;
 		}
 	}
 }
 
 PlayerTank.prototype.handle = function() {
-	if(this.world.level.collide(this, this.x, this.y)) {
+	if(this.world.level.collideEnemies(this, this.x, this.y)) {
 		this.hit(1);
 	}
+
 	this.v.x += this.a.x;
 	this.v.y += this.a.y;
 	
@@ -88,16 +89,10 @@ PlayerTank.prototype.firePrimary = function() {
 	bullet.orig.x = this.x;
 	bullet.orig.y = this.y;
  	//  A · B = |A||B| cos θ
-	var b = [this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]
-	var mag = Math.sqrt(b[0]*b[0] + b[1]*b[1]);
-	b[0] /= mag;
-	b[1] /= mag;
-
-	//alert(bullet.v.x + " " + bullet.v.y);
+	var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
 	bullet.v.x = b[0] * 8;
 	bullet.v.y = b[1] * 8;
-	//alert(bullet.v.x + " " + bullet.v.y);
-	this.world.bullets.push(bullet);
+	this.world.level.bullets.push(bullet);
 }
 
 
@@ -106,17 +101,10 @@ PlayerTank.prototype.fireSecondary = function() {
 	grenade.locate(this.x, this.y);
 	grenade.orig.x = this.x;
 	grenade.orig.y = this.y;
- 	//  A · B = |A||B| cos θ
-	var b = [this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]
-	var mag = Math.sqrt(b[0]*b[0] + b[1]*b[1]);
-	b[0] /= mag;
-	b[1] /= mag;
-
-	//alert(grenade.v.x + " " + grenade.v.y);
+	var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
 	grenade.v.x = b[0] * 8;
 	grenade.v.y = b[1] * 8;
-	//alert(grenade.v.x + " " + grenade.v.y);
-	this.world.bullets.push(grenade);
+	this.world.level.bullets.push(grenade);
 }
 
 PlayerTank.prototype.draw = function(screen) {
@@ -132,7 +120,7 @@ PlayerTank.prototype.pointGunToMouse = function() {
 	var A = [mx - this.base.x, my - this.base.y];
 	var B = [this.base.x - this.base.x, (this.base.y-1) - this.base.y];
 
-	this.gunTheta = vectorTheta(A,B);
+	this.gunTheta = Vector.theta(A,B);
 	if(mx < this.base.x) {
 		this.gunTheta *= -1;
 	}
@@ -143,7 +131,7 @@ PlayerTank.prototype.pointBase = function(e) {
 	var A = [0 - this.v.x, 0 - this.v.y];
 	var B = [this.v.x - this.v.x, (this.v.y-1) - this.v.y];
 
-	var theta = vectorTheta(A,B);
+	var theta = Vector.theta(A,B);
 	if(0 < this.v.x) {
 		theta *= -1;
 	}

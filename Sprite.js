@@ -106,7 +106,7 @@ AnimatedSprite.prototype.draw = function(canvas, x, y) {
     context.restore();
 
     // animate
-    var time = new Date().getTime();
+    var time = Clock.time();
     if(time - this.lastAnimated > this.speed) {
         this.lastAnimated = time;
         this.frameX += this.frameWidth;
