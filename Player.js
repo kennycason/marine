@@ -59,17 +59,9 @@ PlayerTank.prototype.hit = function(damage) {
 }
 
 PlayerTank.prototype.handle = function() {
-
-	if(this.world.level.collide(this, this.x - 2*this.v.x - this.world.level.x, this.y - this.world.level.y)
-		|| this.world.level.collide(this, this.x + 2*this.v.x - this.world.level.x, this.y - this.world.level.y)) {
-
+	if(this.world.level.collide(this, this.x, this.y)) {
 		this.hit(1);
 	}
-	if(this.world.level.collide(this, this.x - this.world.level.x, this.y - 2*this.v.y - this.world.level.y)
-		|| this.world.level.collide(this, this.x - this.world.level.x, this.y + 2*this.v.y - this.world.level.y)) {
-		this.hit(1);
-	}
-
 	this.v.x += this.a.x;
 	this.v.y += this.a.y;
 	

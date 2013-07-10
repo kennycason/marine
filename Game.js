@@ -1,4 +1,4 @@
-function Marines() {
+function Game() {
 
 	this.keyboard = new Keyboard();
 	this.mouse = new Mouse();
@@ -15,6 +15,8 @@ function Marines() {
 
 	this.paused = false;
 
+	this.gameloopInterval;
+
 /*	this.marine = new Sprite("img/marine1.png");
 	this.troops = [
 				[new Entity(this.marine, 550, 300), new Entity(this.marine, 550, 315), new Entity(this.marine, 550, 330)],
@@ -25,14 +27,19 @@ function Marines() {
 
 	this.run = function() {
 		this.initKeyboard();
-		FPS = 30;
 		var that = this;
-		setInterval(function() {
-			if(!that.paused) {
-				that.handle();
-				that.draw();	
-			}
-		}, 33);
+		var FPS = 30;
+		window.addEventListener('focus', function() {
+			that.gameloopInterval = setInterval(function() {
+				if(!that.paused) {
+					that.handle();
+					that.draw();	
+				}
+			}, 33);
+		});    
+		window.addEventListener('blur', function() {
+			window.clearInterval(that.gameloopInterval);
+		});
 	}
 
 	this.handle = function() {
@@ -127,7 +134,6 @@ function Marines() {
 		});
 
 	}
-
 
 }
 

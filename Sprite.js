@@ -1,3 +1,17 @@
+var Sprites = {
+
+    lib : [],
+
+    put : function(id, sprite) {
+        this.lib[id] = sprite
+    },
+    get : function(id) {
+        return this.lib[id];
+    }
+
+};
+
+
 function Sprite(src, fn) {
     this.image = new Image();
     if(fn != null) {
