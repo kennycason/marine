@@ -13,6 +13,9 @@ function Level(level, world) {
 			new EnemyChopper(world, 450, -50), 
 			new EnemyJet(world, 500, -200),
 			new EnemyMegaShip(world, 800, -500),
+			new EnemyMegaShip(world, -700, 100),
+			new EnemyMegaShip(world, 400, 800),
+			new EnemyMegaShip(world, -500, 700),
 		];
 		for(var i = 0; i < 100; i++) {
 			this.enemies.push(new EnemySoldier(world, Dice.roll(6000) - 3000, Dice.roll(6000) - 3000));
