@@ -128,9 +128,6 @@ Level.prototype.draw = function(screen) {
 	for(var i = 0; i < this.enemies.length; i++) {
 		this.enemies[i].draw(screen);
 	}
-	for(var i = 0; i < this.bullets.length; i++) {
-		this.bullets[i].draw(screen);
-	}
 	for(var i = 0; i < this.ebullets.length; i++) {
 		this.ebullets[i].draw(screen);
 	}
