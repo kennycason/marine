@@ -267,3 +267,166 @@ EnemySoldier.prototype.pointBaseToPlayer = function() {
 	}
 	this.sprite.rotate(this.theta);
 }
+
+
+
+
+
+function EnemyMegaShip(world, x, y) {
+	Enemy.call(this);
+
+	this.world = world;
+	this.name = "Mega Ship";
+	var that = this;
+	this.sprite = new Sprite("img/mega_ship.png", function(sprite) {
+		that.w = sprite.width();
+		that.h = sprite.height();
+	});
+	this.sprite.rotate(Math.PI);
+	this.theta = 0;
+	this.scale = 1;
+	this.ds = 0.005;
+	this.x = x;
+	this.y = y;
+	this.hp = 50;
+	this.hpm = 50;
+
+	this.shooting = false;
+	this.shootTime = 0;
+}
+
+
+EnemyMegaShip.prototype = new Enemy();
+EnemyMegaShip.prototype.constructor = EnemyMegaShip;
+
+EnemyMegaShip.prototype.dead = function() {
+	return this.hp <= 0;
+}
+
+EnemyMegaShip.prototype.die = function() {
+	for(var i = 0; i < 500; i++) {
+		this.world.level.events.push(new Explosion(this.world, this.x + Dice.roll(2000) - 1000, this.y + Dice.roll(2000) - 1000));
+	}
+}
+
+EnemyMegaShip.prototype.handle = function() {
+	Enemy.prototype.handle.call(this);
+
+	this.scale += this.ds;
+
+	if(this.scale < 1) {
+		this.scale = 1;
+		this.ds *= -1;
+	} else if(this.scale > 1.2) {
+		this.scale = 1.2;
+		this.ds *= -1;
+	}
+	this.sprite.scale(this.scale);
+	// shoot
+	var d = Point.distance([this.x, this.y], [this.world.player.x, this.world.player.y]);
+	if(d < 400) {
+		if(Clock.time() - this.shootTime > 50) {
+			this.shootTime = Clock.time();
+			var bullet = new Bullet(this.world);
+			bullet.range = 900;
+			bullet.locate(this.x, this.y);
+			bullet.orig.x = this.x;
+			bullet.orig.y = this.y;
+			var b = Vector.unit([this.world.player.x - this.x, this.world.player.y - this.y]);
+			bullet.v.x = b[0] * 20;
+			bullet.v.y = b[1] * 20;
+			this.world.level.ebullets.push(bullet);
+
+			var bullet2 = new Bullet(this.world);
+			bullet2.range = 900;
+			bullet2.locate(this.x, this.y);
+			bullet2.orig.x = this.x;
+			bullet2.orig.y = this.y;
+			bullet2.v.x = b[0] * 20 + 4;
+			bullet2.v.y = b[1] * 20;
+			this.world.level.ebullets.push(bullet2);
+
+			var bullet3 = new Bullet(this.world);
+			bullet3.range = 900;
+			bullet3.locate(this.x, this.y);
+			bullet3.orig.x = this.x;
+			bullet3.orig.y = this.y;
+			bullet3.v.x = b[0] * 20 - 4;
+			bullet3.v.y = b[1] * 20;
+			this.world.level.ebullets.push(bullet3);
+
+			var bullet4 = new Bullet(this.world);
+			bullet4.range = 900;
+			bullet4.locate(this.x, this.y);
+			bullet4.orig.x = this.x;
+			bullet4.orig.y = this.y;
+			bullet4.v.x = b[0] * 20;
+			bullet4.v.y = b[1] * 20 + 4;
+			this.world.level.ebullets.push(bullet4);
+
+			var bullet5 = new Bullet(this.world);
+			bullet5.range = 900;
+			bullet5.locate(this.x, this.y);
+			bullet5.orig.x = this.x;
+			bullet5.orig.y = this.y;
+			bullet5.v.x = b[0] * 20;
+			bullet5.v.y = b[1] * 20 - 4;
+			this.world.level.ebullets.push(bullet5);
+
+			var bullet6 = new Bullet(this.world);
+			bullet6.range = 900;
+			bullet6.locate(this.x, this.y);
+			bullet6.orig.x = this.x;
+			bullet6.orig.y = this.y;
+			bullet6.v.x = b[0] * 20;
+			bullet6.v.y = b[1] * 20 - 10;
+			this.world.level.ebullets.push(bullet6);
+
+			var bullet7 = new Bullet(this.world);
+			bullet7.range = 900;
+			bullet7.locate(this.x, this.y);
+			bullet7.orig.x = this.x;
+			bullet7.orig.y = this.y;
+			bullet7.v.x = b[0] * 20;
+			bullet7.v.y = b[1] * 20 + 10;
+			this.world.level.ebullets.push(bullet7);
+
+			var bullet8 = new Bullet(this.world);
+			bullet8.range = 900;
+			bullet8.locate(this.x, this.y);
+			bullet8.orig.x = this.x;
+			bullet8.orig.y = this.y;
+			bullet8.v.x = b[0] * 20;
+			bullet8.v.y = b[1] * 20 - 10;
+			this.world.level.ebullets.push(bullet8);
+
+			var bullet9 = new Bullet(this.world);
+			bullet9.range = 900;
+			bullet9.locate(this.x, this.y);
+			bullet9.orig.x = this.x;
+			bullet9.orig.y = this.y;
+			bullet9.v.x = b[0] * 20;
+			bullet9.v.y = b[1] * 20 + 10;
+			this.world.level.ebullets.push(bullet9);
+		}
+	}
+	this.pointBaseToPlayer();
+}
+
+EnemyMegaShip.prototype.draw = function(screen) {
+	this.sprite.draw(screen, this.world.level.x + this.x, this.world.level.y + this.y);
+}
+
+EnemyMegaShip.prototype.pointBaseToPlayer = function() {
+	var px = this.world.player.x;
+	var py = this.world.player.y;
+
+	var A = [px - this.x, py - this.y]; // vector pointing to player
+	var B = [this.x - this.x, (this.y-1) - this.y]; // X-axis
+	this.theta = Vector.theta(A,B);
+	if(px < this.x) {
+		this.theta *= -1;
+	}
+	this.sprite.rotate(this.theta);
+}
+

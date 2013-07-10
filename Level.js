@@ -12,11 +12,10 @@ function Level(level, world) {
 			new EnemyChopper(world, 300, -200), 
 			new EnemyChopper(world, 450, -50), 
 			new EnemyJet(world, 500, -200),
-			new EnemySoldier(world, 25, 40),
-			new EnemySoldier(world, 25, 65)
+			new EnemyMegaShip(world, 800, -500),
 		];
-		for(var i = 0; i < 50; i++) {
-			this.enemies.push(new EnemySoldier(world, Dice.roll(3000) - 1500, Dice.roll(3000) - 1500));
+		for(var i = 0; i < 100; i++) {
+			this.enemies.push(new EnemySoldier(world, Dice.roll(6000) - 3000, Dice.roll(6000) - 3000));
 		}
 	}
 	this.x = 0;
@@ -122,14 +121,13 @@ Level.prototype.draw = function(screen) {
 	for(var i = 0; i < this.bullets.length; i++) {
 		this.bullets[i].draw(screen);
 	}
-
+	for(var i = 0; i < this.ebullets.length; i++) {
+		this.ebullets[i].draw(screen);
+	}
 	this.world.player.draw(screen);
 
 	for(var i = 0; i < this.enemies.length; i++) {
 		this.enemies[i].draw(screen);
-	}
-	for(var i = 0; i < this.ebullets.length; i++) {
-		this.ebullets[i].draw(screen);
 	}
 	for(var i = 0; i < this.events.length; i++) {
 		this.events[i].draw(screen);

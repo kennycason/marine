@@ -110,7 +110,7 @@ PlayerTank.prototype.fireSecondary = function() {
 PlayerTank.prototype.draw = function(screen) {
 	this.pointBase();
 	this.base.draw(screen, this.base.x, this.base.y);
-	this.gun.draw(screen, this.base.x + -1, this.base.y);
+	this.gun.draw(screen, this.base.x, this.base.y);
 }
 
 PlayerTank.prototype.pointGunToMouse = function() {
