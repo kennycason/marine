@@ -288,8 +288,8 @@ function EnemyMegaShip(world, x, y) {
 	this.ds = 0.005;
 	this.x = x;
 	this.y = y;
-	this.hp = 50;
-	this.hpm = 50;
+	this.hp = 30;
+	this.hpm = 30;
 
 	this.shooting = false;
 	this.shootTime = 0;
