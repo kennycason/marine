@@ -69,7 +69,7 @@ function Game() {
 				this.screen.drawRect(5 + i * 10, 5, 7, 20, Palette.LIGHT_GRAY);
 			}
 		}
-		// this.screen.drawText("x 3", 120, 23, Palette.BLACK, "normal 24px Comic San");
+		this.player.weapons[this.player.currentWeapon].obj.hud(this.screen);
 	}
 
 	this.initKeyboard = function() {

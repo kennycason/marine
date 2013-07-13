@@ -24,16 +24,51 @@ function PlayerTank(world) {
 	this.hp = 10;
 	this.hpm = 10;
 
+	this.weapons = [
+		{type : WeaponTypes.grenade, ammo : 20, obj : new Grenade(this.world)},
+		{type : WeaponTypes.missile1, ammo : 10, obj : new Missile1(this.world)},
+		{type : WeaponTypes.missile2, ammo : 5, obj : new Missile2(this.world)}
+	];
+
+	this.currentWeapon = 0;
+
 	$("#canvas").mousemove(function() {
 		that.pointGunToMouse();
 	});
 
-	$("#canvas").click(function(e) {
-		that.firePrimary();
+	$(document).bind('DOMMouseScroll mousewheel', function(e) {
+        if(e.originalEvent.wheelDelta /120 > 0) {
+            that.currentWeapon++;
+			if(that.currentWeapon >= that.weapons.length) {
+				that.currentWeapon = 0;
+			}
+        }
+        else{
+            that.currentWeapon--;
+			if(that.currentWeapon < 0) {
+				that.currentWeapon = that.weapons.length - 1;
+			}
+        }
+    });
+	$(document).scroll(function(e) {
+		this.currentWeapon++;
+		if(this.currentWeapon >= this.weapons.length) {
+			this.currentWeapon = 0;
+		}
 	});
 
-	$('#canvas').bind("contextmenu", function(e){
-	    that.fireSecondary();
+	$(document).click(function(e) {
+		switch(e.which) {
+			case 1: // primary
+				that.firePrimary();
+				break;
+			case 3: // secondary
+				that.fireSecondary();
+				break;
+		}
+	});
+
+	$(document).bind("contextmenu", function(e){
 	    return false;
 	}); 
 
@@ -62,7 +97,6 @@ PlayerTank.prototype.handle = function() {
 	if(this.world.level.collideEnemies(this, this.x, this.y)) {
 		this.hit(1);
 	}
-
 	this.v.x += this.a.x;
 	this.v.y += this.a.y;
 	
@@ -88,7 +122,6 @@ PlayerTank.prototype.firePrimary = function() {
 	bullet.locate(this.x, this.y);
 	bullet.orig.x = this.x;
 	bullet.orig.y = this.y;
- 	//  A · B = |A||B| cos θ
 	var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
 	bullet.v.x = b[0] * 8;
 	bullet.v.y = b[1] * 8;
@@ -97,14 +130,45 @@ PlayerTank.prototype.firePrimary = function() {
 
 
 PlayerTank.prototype.fireSecondary = function() {
-	var grenade = new Grenade(this.world);
-	grenade.locate(this.x, this.y);
-	grenade.orig.x = this.x;
-	grenade.orig.y = this.y;
-	var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
-	grenade.v.x = b[0] * 8;
-	grenade.v.y = b[1] * 8;
-	this.world.level.bullets.push(grenade);
+	if(this.weapons[this.currentWeapon].ammo == 0) {
+		return;
+	}
+
+	switch(this.weapons[this.currentWeapon].type) {
+		case WeaponTypes.grenade:
+			this.weapons[this.currentWeapon].ammo--;
+			var grenade = new Grenade(this.world);
+			grenade.locate(this.x, this.y);
+			grenade.orig.x = this.x;
+			grenade.orig.y = this.y;
+			var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
+			grenade.v.x = b[0] * grenade.speed;
+			grenade.v.y = b[1] * grenade.speed;
+			this.world.level.bullets.push(grenade);
+			break;
+		case WeaponTypes.missile1:
+			this.weapons[this.currentWeapon].ammo--;
+			var missile = new Missile1(this.world);
+			missile.locate(this.x, this.y);
+			missile.orig.x = this.x;
+			missile.orig.y = this.y;
+			var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
+			missile.v.x = b[0] * missile.speed;
+			missile.v.y = b[1] * missile.speed;
+			this.world.level.bullets.push(missile);
+			break;
+		case WeaponTypes.missile2:
+			this.weapons[this.currentWeapon].ammo--;
+			var missile = new Missile2(this.world);
+			missile.locate(this.x, this.y);
+			missile.orig.x = this.x;
+			missile.orig.y = this.y;
+			var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
+			missile.v.x = b[0] * missile.speed;
+			missile.v.y = b[1] * missile.speed;
+			this.world.level.bullets.push(missile);
+			break;
+	}
 }
 
 PlayerTank.prototype.draw = function(screen) {
