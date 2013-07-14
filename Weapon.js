@@ -12,6 +12,7 @@ function Weapon(world) {
 	this.orig = {x : 0, y : 0};
 	this.range = 0;
 	this.damage = 0;
+	this.isFinished = false;
 }
 Weapon.prototype = new Entity();
 Weapon.prototype.constructor = Weapon;
@@ -29,7 +30,7 @@ Weapon.prototype.hud = function(screen) {
 }
 
 Weapon.prototype.finished = function() {
-	return this.distance() > this.range;
+	return this.distance() > this.range || this.isFinished;
 }
 
 Weapon.prototype.finish = function() {
@@ -41,6 +42,13 @@ Weapon.prototype.handle = function() {
 	this.y += this.v.y;
 }
 
+
+function TankCollide(world) {
+	Weapon.call(this, world);
+	this.damage = 1;
+}
+TankCollide.prototype = new Weapon();
+TankCollide.prototype.constructor = TankCollide;
 
 
 function Bullet(world) {

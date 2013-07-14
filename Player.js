@@ -5,6 +5,7 @@ function PlayerTank(world) {
 
 	this.x = 640/2;
 	this.y = 480/2;
+	this.z = 0;
 
 	this.invincible = false;
 	this.lastHitTime = 0;

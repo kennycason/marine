@@ -4,6 +4,7 @@ function Level(level, world) {
 	this.bullets = [];
 	this.ebullets = [];
 	this.events = [];
+	this.env = [];
 
 	if(level == 1) {
 		this.enemies = [
@@ -14,7 +15,7 @@ function Level(level, world) {
 			new EnemyJet(world, 500, -200),
 			new EnemyMegaShip(world, 800, -500),
 		];
-		for(var i = 0; i < 20; i++) {
+		for(var i = 0; i < 100; i++) {
 			this.enemies.push(new EnemySoldier(world, Dice.roll(6000) - 3000, Dice.roll(6000) - 3000));
 		}
 	}
@@ -38,7 +39,14 @@ Level.prototype.collide = function(e, ex, ey) {
 // collide with enemies
 Level.prototype.collideEnemies = function(e, ex, ey) {
 	for(var i = 0; i < this.enemies.length; i++) {
+		if(e.z != this.enemies[i].z) {
+			continue;
+		}
 		if(this.enemies[i].collide(e, ex, ey)) {
+			if(e.m > this.enemies[i].m) {
+				this.enemies[i].hit(new TankCollide(this.world));
+				continue;
+			}
 			return true;
 		}
 	}
@@ -69,8 +77,8 @@ Level.prototype.handle = function() {
 	// handle player bullet/enemy collision
 	for(var i = 0; i < this.bullets.length; i++) {
 		for(var j = 0; j < this.enemies.length; j++) {
-			var hit = this.enemies[j].hit(this.bullets[i]);
-			if(hit) {
+			if(this.enemies[j].collide(this.bullets[i])) {
+				this.enemies[j].hit(this.bullets[i]);
 				this.bullets[i].finish();
 				this.bullets.splice(i, 1);
 				i--;
@@ -117,6 +125,9 @@ Level.prototype.drawBackground = function(screen) {
 
 Level.prototype.draw = function(screen) {
 	this.drawBackground(screen);
+	for(var i = 0; i < this.env.length; i++) {
+		this.env[i].draw(screen);
+	}
 
 	for(var i = 0; i < this.bullets.length; i++) {
 		this.bullets[i].draw(screen);

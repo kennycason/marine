@@ -4,6 +4,7 @@ function Enemy(world) {
 
 	this.hp = 1;
 	this.hpm = 1;
+	this.name = "None";
 
 	this.lastHit = 0;
 	this.invincible = false;
@@ -23,14 +24,10 @@ Enemy.prototype.handle = function() {
 
 Enemy.prototype.hit = function(weapon) {
 	if(!this.invincible) {
-		if(this.collide(weapon)) {
-			this.hp -= weapon.damage;
-			this.lastHit = Clock.time();
-			this.invincible = true;
-			return true;
-		}
+		this.hp -= weapon.damage;
+		this.lastHit = Clock.time();
+		this.invincible = true;
 	}
-	return false;
 }
 
 Enemy.prototype.attack = function() {
@@ -65,6 +62,7 @@ function EnemyJet(world, x, y) {
 	this.ds = 0.03;
 	this.x = x;
 	this.y = y;
+	this.z = 2;
 	this.hp = 5;
 	this.hpm = 5;
 }
@@ -83,9 +81,9 @@ EnemyJet.prototype.die = function() {
 
 EnemyJet.prototype.handle = function() {
 	Enemy.prototype.handle.call(this);
-	this.y += 8;
-	if(this.y > 480) {
-		this.y = -291;
+	this.y += 30;
+	if(this.y > 2480) {
+		this.y = -2291;
 	}
 	this.scale += this.ds;
 	if(this.scale > 1.2) {
@@ -102,8 +100,6 @@ EnemyJet.prototype.draw = function(screen) {
 	this.jet.draw(screen, this.world.level.x + this.x, this.world.level.y + this.y);
 }
 
-
-
 function EnemyChopper(world, x, y) {
 	Enemy.call(this);
 	this.world = world;
@@ -119,6 +115,7 @@ function EnemyChopper(world, x, y) {
 	this.bladesTheta = 0;
 	this.x = x;
 	this.y = y;
+	this.z = 1;
 	this.hp = 3;
 	this.hpm = 3;
 }
@@ -164,8 +161,6 @@ EnemyChopper.prototype.pointBaseToPlayer = function() {
 
 
 
-
-
 function EnemySoldier(world, x, y) {
 	Enemy.call(this);
 
@@ -185,8 +180,11 @@ function EnemySoldier(world, x, y) {
 	this.ds = 0.003;
 	this.x = x;
 	this.y = y;
+	this.z = 0;
+	this.m = 0;
 	this.hp = 1;
 	this.hpm = 1;
+	this.speed = 1;
 
 	this.shooting = false;
 	this.shootTime = 0;
@@ -201,7 +199,7 @@ EnemySoldier.prototype.dead = function() {
 }
 
 EnemySoldier.prototype.die = function() {
-	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
+	this.world.level.env.push(new BloodSplatter(this.world, this.x, this.y));
 }
 
 EnemySoldier.prototype.handle = function() {
@@ -218,25 +216,19 @@ EnemySoldier.prototype.handle = function() {
 		bullet.locate(this.x, this.y);
 		bullet.orig.x = this.x;
 		bullet.orig.y = this.y;
-		var b = Vector.unit([this.world.player.x - this.x, this.world.player.y - this.y]);
-		bullet.v.x = b[0] * 8;
-		bullet.v.y = b[1] * 8;
+
+		var v = Vector.unit([this.world.player.x - this.x, this.world.player.y - this.y]);
+		bullet.v.x = v[0] * 8;
+		bullet.v.y = v[1] * 8;
 		this.world.level.ebullets.push(bullet);
 	}
+
 	// move
 	if(!this.shooting) {
-		this.v.x = 0;
-		this.v.y = 0;
-		if(this.x < this.world.player.x) {
-			this.v.x = 1;
-		} else if(this.x > this.world.player.x) {
-			this.v.x= -1;
-		}
-		if(this.y < this.world.player.y) {
-			this.v.y = 1;
-		} else if(this.y > this.world.player.y) {
-			this.v.y= -1;
-		}
+		var v = Vector.unit([this.world.player.x - this.x, this.world.player.y - this.y]);
+		this.v.x = v[0] * this.speed;
+		this.v.y = v[1] * this.speed;
+
 		var d = Point.distance([this.x, this.y], [this.world.player.x, this.world.player.y]);
 		if(d > 50) {
 			this.x += this.v.x;
@@ -267,9 +259,6 @@ EnemySoldier.prototype.pointBaseToPlayer = function() {
 	}
 	this.sprite.rotate(this.theta);
 }
-
-
-
 
 
 function EnemyMegaShip(world, x, y) {
@@ -305,7 +294,7 @@ EnemyMegaShip.prototype.dead = function() {
 
 EnemyMegaShip.prototype.die = function() {
 	for(var i = 0; i < 500; i++) {
-		this.world.level.events.push(new Explosion(this.world, this.x + Dice.roll(2000) - 1000, this.y + Dice.roll(2000) - 1000));
+		this.world.level.events.push(new Explosion(this.world, this.x + Dice.roll(500) - 250, this.y + Dice.roll(500) - 250));
 	}
 }
 
