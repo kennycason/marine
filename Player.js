@@ -26,9 +26,9 @@ function PlayerTank(world) {
 	this.hpm = 10;
 
 	this.weapons = [
-		{type : WeaponTypes.grenade, ammo : 20, obj : new Grenade(this.world)},
-		{type : WeaponTypes.missile1, ammo : 10, obj : new Missile1(this.world)},
-		{type : WeaponTypes.missile2, ammo : 5, obj : new Missile2(this.world)}
+		{type : WeaponTypes.grenade, ammo : 999, obj : new Grenade(this.world)},
+		{type : WeaponTypes.missile1, ammo : 999, obj : new Missile1(this.world)},
+		{type : WeaponTypes.missile2, ammo : 999, obj : new Missile2(this.world)}
 	];
 
 	this.currentWeapon = 0;
@@ -138,36 +138,18 @@ PlayerTank.prototype.fireSecondary = function() {
 	switch(this.weapons[this.currentWeapon].type) {
 		case WeaponTypes.grenade:
 			this.weapons[this.currentWeapon].ammo--;
-			var grenade = new Grenade(this.world);
-			grenade.locate(this.x, this.y);
-			grenade.orig.x = this.x;
-			grenade.orig.y = this.y;
-			var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
-			grenade.v.x = b[0] * grenade.speed;
-			grenade.v.y = b[1] * grenade.speed;
-			this.world.level.bullets.push(grenade);
+			var b = new Grenade(this.world);
+			this.world.level.bullets.push(b);
 			break;
 		case WeaponTypes.missile1:
 			this.weapons[this.currentWeapon].ammo--;
-			var missile = new Missile1(this.world);
-			missile.locate(this.x, this.y);
-			missile.orig.x = this.x;
-			missile.orig.y = this.y;
-			var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
-			missile.v.x = b[0] * missile.speed;
-			missile.v.y = b[1] * missile.speed;
-			this.world.level.bullets.push(missile);
+			var b = new Missile1(this.world);
+			this.world.level.bullets.push(b);
 			break;
 		case WeaponTypes.missile2:
 			this.weapons[this.currentWeapon].ammo--;
-			var missile = new Missile2(this.world);
-			missile.locate(this.x, this.y);
-			missile.orig.x = this.x;
-			missile.orig.y = this.y;
-			var b = Vector.unit([this.world.mouse.x - this.base.x, this.world.mouse.y - this.base.y]);
-			missile.v.x = b[0] * missile.speed;
-			missile.v.y = b[1] * missile.speed;
-			this.world.level.bullets.push(missile);
+			var b = new Missile2(this.world);
+			this.world.level.bullets.push(b);
 			break;
 	}
 }

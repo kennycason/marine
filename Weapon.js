@@ -85,6 +85,15 @@ function Grenade(world) {
 	this.ds = 0.1;
 	this.s = 1.0;
 	this.speed = 8;
+	if(this.world.player) {
+		this.locate(this.world.player.x, this.world.player.y);
+
+		this.orig.x = this.x;
+		this.orig.y = this.y;
+		var b = Vector.unit([this.world.mouse.x - this.world.player.base.x, this.world.mouse.y - this.world.player.base.y]);
+		this.v.x = b[0] * this.speed;
+		this.v.y = b[1] * this.speed;
+	}
 }
 Grenade.prototype = new Weapon();
 Grenade.prototype.constructor = Grenade;
@@ -135,6 +144,24 @@ function Missile1(world) {
 	this.range = 400;
 	this.damage = 3;
 	this.speed = 14;
+	if(this.world.player) {
+		this.locate(this.world.player.x, this.world.player.y);
+		this.orig.x = this.x;
+		this.orig.y = this.y;
+		var b = Vector.unit([this.world.mouse.x - this.world.player.base.x, this.world.mouse.y - this.world.player.base.y]);
+		this.v.x = b[0] * this.speed;
+		this.v.y = b[1] * this.speed;
+	}
+	var A = [0 - this.v.x, 0 - this.v.y];
+	var B = [this.v.x - this.v.x, (this.v.y-1) - this.v.y];
+
+	this.theta  = Vector.theta(A,B);
+	if(0 < this.v.x) {
+		this.theta  *= -1;
+	}
+	this.theta += Math.PI;
+	this.sprite.rotate(this.theta);
+	this.sprite.scale(2);
 }
 Missile1.prototype = new Weapon();
 Missile1.prototype.constructor = Missile1;
@@ -142,18 +169,6 @@ Missile1.prototype.constructor = Missile1;
 Missile1.prototype.handle = function() {
 	this.x += this.v.x;
 	this.y += this.v.y;
-
-	var A = [0 - this.v.x, 0 - this.v.y];
-	var B = [this.v.x - this.v.x, (this.v.y-1) - this.v.y];
-
-	var theta = Vector.theta(A,B);
-	if(0 < this.v.x) {
-		theta *= -1;
-	}
-	theta += Math.PI;
-	this.sprite.rotate(theta);
-
-	this.sprite.scale(2);
 }
 
 Missile1.prototype.hud = function(screen) {
@@ -180,28 +195,59 @@ function Missile2(world) {
 	that.w = sprite.width();
 	that.h = sprite.height();	
 	});
-	this.range = 400;
-	this.damage = 5;
-	this.speed = 17;
+	this.range = 1200;
+	this.damage = 3;
+	this.speed = 14;
+	this.startTime = Clock.time();
+	if(this.world.player) {
+		this.locate(this.world.player.x, this.world.player.y);
+		this.orig.x = this.x;
+		this.orig.y = this.y;
+		var b = Vector.unit([this.world.mouse.x - this.world.player.base.x, this.world.mouse.y - this.world.player.base.y]);
+		this.v.x = b[0] * this.speed;
+		this.v.y = b[1] * this.speed;
+	}
+	var A = [0 - this.v.x, 0 - this.v.y];
+	var B = [this.v.x - this.v.x, (this.v.y-1) - this.v.y];
+
+	this.theta = Vector.theta(A,B);
+	if(0 < this.v.x) {
+		this.theta *= -1;
+	}
+	this.theta += Math.PI;
+	this.sprite.rotate(this.theta);
+	this.sprite.scale(1.5);
+
 }
 Missile2.prototype = new Weapon();
 Missile2.prototype.constructor = Missile2;
 
 Missile2.prototype.handle = function() {
+	var flyTime = Clock.time() - this.startTime;
+	if(this.world.level.enemies.length > 0 && flyTime > 300) {
+		this.tgt = this.world.level.getClosestEnemy(this);
+		if(Point.distance([this.x, this.y], [this.tgt.x, this.tgt.y]) > 450) {
+			this.tgt = null;
+		}
+	}
+	if(this.tgt && this.tgt.hp > 0) {
+		var A = [this.tgt.x - this.x, this.tgt.y - this.y];
+		var B = [this.x - this.x, (this.y-1) - this.y];
+		this.theta = Vector.theta(A,B);
+		if(this.tgt.x < this.x) {
+			this.theta *= -1;
+		}
+		//this.theta += Math.PI;
+		this.sprite.rotate(this.theta);
+		var b = Vector.unit(A);
+		this.v.x = b[0] * this.speed;
+		this.v.y = b[1] * this.speed;
+	}
 	this.x += this.v.x;
 	this.y += this.v.y;
-
-	var A = [0 - this.v.x, 0 - this.v.y];
-	var B = [this.v.x - this.v.x, (this.v.y-1) - this.v.y];
-
-	var theta = Vector.theta(A,B);
-	if(0 < this.v.x) {
-		theta *= -1;
+	if(Clock.time() - this.startTime > 3000) {
+		this.isFinished = true;
 	}
-	theta += Math.PI;
-	this.sprite.rotate(theta);
-
-	this.sprite.scale(2);
 }
 
 Missile2.prototype.hud = function(screen) {
@@ -214,6 +260,6 @@ Missile2.prototype.draw = function(screen) {
 	this.sprite.draw(screen, this.x + this.world.level.x, this.y + this.world.level.y);
 }
 
-Missile1.prototype.finish = function() {
+Missile2.prototype.finish = function() {
 	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
 }

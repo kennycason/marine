@@ -15,7 +15,7 @@ function Level(level, world) {
 			new EnemyJet(world, 500, -200),
 			new EnemyMegaShip(world, 800, -500),
 		];
-		for(var i = 0; i < 100; i++) {
+		for(var i = 0; i < 200; i++) {
 			this.enemies.push(new EnemySoldier(world, Dice.roll(6000) - 3000, Dice.roll(6000) - 3000));
 		}
 	}
@@ -51,6 +51,19 @@ Level.prototype.collideEnemies = function(e, ex, ey) {
 		}
 	}
 	return false;
+}
+
+Level.prototype.getClosestEnemy = function(e) {
+	var min_i = 0;
+	var min_d = 999999999;
+	for(var i = 0; i < this.enemies.length; i++) {
+		var d = Point.distance([e.x, e.y], [this.enemies[i].x, this.enemies[i].y]);
+		if(d < min_d) {
+			min_d = d;
+			min_i = i;
+		}
+	}
+	return this.enemies[min_i];
 }
 
 Level.prototype.handle = function() {
