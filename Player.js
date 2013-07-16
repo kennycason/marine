@@ -3,9 +3,7 @@ function PlayerTank(world) {
 	Entity.call(this);
 	this.world = world;
 
-	this.x = 640/2;
-	this.y = 480/2;
-	this.z = 0;
+	this.score = 0;
 
 	this.invincible = false;
 	this.lastHitTime = 0;
@@ -17,18 +15,23 @@ function PlayerTank(world) {
 	});
 	this.base.x = 640/2;
 	this.base.y = 480/2;
+	this.x = this.base.x;
+	this.y = this.base.y;
+	this.z = 0;
+	
 	this.gun = new Sprite("img/tank2_gun.png"); 
 
 	this.gunTheta = 0;
 	this.initTheta = 0;
 
-	this.hp = 10;
-	this.hpm = 10;
+	this.hp = 20;
+	this.hpm = 20;
 
 	this.weapons = [
 		{type : WeaponTypes.grenade, ammo : 999, obj : new Grenade(this.world)},
 		{type : WeaponTypes.missile1, ammo : 999, obj : new Missile1(this.world)},
-		{type : WeaponTypes.missile2, ammo : 999, obj : new Missile2(this.world)}
+		{type : WeaponTypes.missile2, ammo : 999, obj : new Missile2(this.world)},
+		{type : WeaponTypes.landmine, ammo : 999, obj : new LandMine(this.world)}
 	];
 
 	this.currentWeapon = 0;
@@ -87,16 +90,19 @@ PlayerTank.prototype.hit = function(damage) {
 		if(this.hp <= 0) {
 			window.location.reload();
 		}
-	} else {
-		if(Clock.time() - this.lastHitTime > 300) {
-			this.invincible = false;
-		}
 	}
 }
 
 PlayerTank.prototype.handle = function() {
-	if(this.world.level.collideEnemies(this, this.x, this.y)) {
-		this.hit(1);
+	if(this.invincible) {
+		if(Clock.time() - this.lastHitTime > 300) {
+			this.invincible = false;
+		}
+	}
+	if(!this.invincible) {
+		if(this.world.level.collideEnemies(this, this.x, this.y)) {
+			this.hit(1);
+		}
 	}
 	this.v.x += this.a.x;
 	this.v.y += this.a.y;
@@ -149,6 +155,11 @@ PlayerTank.prototype.fireSecondary = function() {
 		case WeaponTypes.missile2:
 			this.weapons[this.currentWeapon].ammo--;
 			var b = new Missile2(this.world);
+			this.world.level.bullets.push(b);
+			break;
+		case WeaponTypes.landmine:
+			this.weapons[this.currentWeapon].ammo--;
+			var b = new LandMine(this.world);
 			this.world.level.bullets.push(b);
 			break;
 	}

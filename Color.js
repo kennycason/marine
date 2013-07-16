@@ -62,3 +62,5 @@ Palette.WHITE = new Color(0xff, 0xff, 0xff);
 Palette.RED = new Color(0xff, 0, 0);
 Palette.GREEN = new Color(0, 0xff, 0);
 Palette.BLUE = new Color(0, 0, 0xff);
+Palette.LIGHT_RED = new Color(0x77, 0, 0);
+Palette.LIGHT_GREEN = new Color(0, 0x77, 0);

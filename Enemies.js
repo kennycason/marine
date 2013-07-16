@@ -5,6 +5,7 @@ function Enemy(world) {
 	this.hp = 1;
 	this.hpm = 1;
 	this.name = "None";
+	this.score = 50;
 
 	this.lastHit = 0;
 	this.invincible = false;
@@ -46,118 +47,6 @@ Enemy.prototype.dead = function() {
 	alert('default enemy dead()');
 }
 
-function EnemyJet(world, x, y) {
-	Enemy.call(this);
-
-	this.world = world;
-	this.name = "Jet";
-	var that = this;
-	this.jet = new Sprite("img/jet.png", function(sprite) {
-		that.w = sprite.width();
-		that.h = sprite.height();
-	});
-	this.jet.rotate(Math.PI);
-
-	this.scale = 1;
-	this.ds = 0.03;
-	this.x = x;
-	this.y = y;
-	this.z = 2;
-	this.hp = 5;
-	this.hpm = 5;
-}
-
-
-EnemyJet.prototype = new Enemy();
-EnemyJet.prototype.constructor = EnemyJet;
-
-EnemyJet.prototype.dead = function() {
-	return this.hp <= 0;
-}
-
-EnemyJet.prototype.die = function() {
-	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
-}
-
-EnemyJet.prototype.handle = function() {
-	Enemy.prototype.handle.call(this);
-	this.y += 30;
-	if(this.y > 2480) {
-		this.y = -2291;
-	}
-	this.scale += this.ds;
-	if(this.scale > 1.2) {
-		this.scale = 1.2;
-		this.ds *= -1;
-	} else if(this.jet.scale < 1) {
-		this.scale = 1;
-		this.ds *= -1;
-	}
-	this.jet.scale(this.jet.scale);
-}
-
-EnemyJet.prototype.draw = function(screen) {
-	this.jet.draw(screen, this.world.level.x + this.x, this.world.level.y + this.y);
-}
-
-function EnemyChopper(world, x, y) {
-	Enemy.call(this);
-	this.world = world;
-
-	this.name = "Chopper";
-	var that = this;
-	this.base = new Sprite("img/chopper_base.png", function(sprite) {
-		that.w = sprite.width();
-		that.h = sprite.height();
-	});
-	this.blades = new Sprite("img/chopper_blades.png");
-	this.baseTheta = 0;
-	this.bladesTheta = 0;
-	this.x = x;
-	this.y = y;
-	this.z = 1;
-	this.hp = 3;
-	this.hpm = 3;
-}
-
-EnemyChopper.prototype = new Enemy();
-EnemyChopper.prototype.constructor = EnemyChopper;
-
-EnemyChopper.prototype.handle = function() {
-	Enemy.prototype.handle.call(this);
-
-	this.blades.rotate((Math.PI / 180.0) * this.bladesTheta);
-	this.bladesTheta -= 30;
-	this.base.x = this.x;
-	this.base.y = this.y;
-	this.pointBaseToPlayer();
-}
-
-EnemyChopper.prototype.dead = function() {
-	return this.hp <= 0;
-}
-
-EnemyChopper.prototype.die = function() {
-	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
-}
-
-EnemyChopper.prototype.draw = function(screen) {
-	this.base.draw(screen, this.world.level.x + this.x, this.world.level.y + this.y);
-	this.blades.draw(screen, this.world.level.x + this.x + -1, this.world.level.y + this.y );
-}
-
-EnemyChopper.prototype.pointBaseToPlayer = function() {
-	var px = this.world.player.x;
-	var py = this.world.player.y;
-
-	var A = [px - this.x, py - this.y]; // vector pointing to player
-	var B = [this.x - this.x, (this.y-1) - this.y]; // X-axis
-	this.baseTheta = Vector.theta(A,B);
-	if(px < this.x) {
-		this.baseTheta *= -1;
-	}
-	this.base.rotate(this.baseTheta);
-}
 
 
 
@@ -185,12 +74,11 @@ function EnemySoldier(world, x, y) {
 	this.hp = 1;
 	this.hpm = 1;
 	this.speed = 1;
+	this.score = 50;
 
 	this.shooting = false;
 	this.shootTime = 0;
 }
-
-
 EnemySoldier.prototype = new Enemy();
 EnemySoldier.prototype.constructor = EnemySoldier;
 
@@ -199,7 +87,8 @@ EnemySoldier.prototype.dead = function() {
 }
 
 EnemySoldier.prototype.die = function() {
-	this.world.level.env.push(new BloodSplatter(this.world, this.x, this.y));
+	this.world.level.effects.push(new BloodSplatter(this.world, this.x, this.y));
+	this.world.player.score += this.score;
 }
 
 EnemySoldier.prototype.handle = function() {
@@ -261,6 +150,133 @@ EnemySoldier.prototype.pointBaseToPlayer = function() {
 }
 
 
+
+
+
+
+function EnemyJet(world, x, y) {
+	Enemy.call(this);
+
+	this.world = world;
+	this.name = "Jet";
+	var that = this;
+	this.jet = new Sprite("img/jet.png", function(sprite) {
+		that.w = sprite.width();
+		that.h = sprite.height();
+	});
+	this.jet.rotate(Math.PI);
+
+	this.scale = 1;
+	this.ds = 0.03;
+	this.x = x;
+	this.y = y;
+	this.z = 2;
+	this.hp = 5;
+	this.hpm = 5;
+	this.score = 300;
+}
+
+
+EnemyJet.prototype = new Enemy();
+EnemyJet.prototype.constructor = EnemyJet;
+
+EnemyJet.prototype.dead = function() {
+	return this.hp <= 0;
+}
+
+EnemyJet.prototype.die = function() {
+	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
+	this.world.player.score += this.score;
+}
+
+EnemyJet.prototype.handle = function() {
+	Enemy.prototype.handle.call(this);
+	this.y += 30;
+	if(this.y > 2480) {
+		this.y = -2291;
+	}
+	this.scale += this.ds;
+	if(this.scale > 1.2) {
+		this.scale = 1.2;
+		this.ds *= -1;
+	} else if(this.jet.scale < 1) {
+		this.scale = 1;
+		this.ds *= -1;
+	}
+	this.jet.scale(this.jet.scale);
+}
+
+EnemyJet.prototype.draw = function(screen) {
+	this.jet.draw(screen, this.world.level.x + this.x, this.world.level.y + this.y);
+}
+
+
+
+function EnemyChopper(world, x, y) {
+	Enemy.call(this);
+	this.world = world;
+
+	this.name = "Chopper";
+	var that = this;
+	this.base = new Sprite("img/chopper_base.png", function(sprite) {
+		that.w = sprite.width();
+		that.h = sprite.height();
+	});
+	this.blades = new Sprite("img/chopper_blades.png");
+	this.baseTheta = 0;
+	this.bladesTheta = 0;
+	this.x = x;
+	this.y = y;
+	this.z = 1;
+	this.hp = 3;
+	this.hpm = 3;
+	this.score = 150;
+}
+
+EnemyChopper.prototype = new Enemy();
+EnemyChopper.prototype.constructor = EnemyChopper;
+
+EnemyChopper.prototype.handle = function() {
+	Enemy.prototype.handle.call(this);
+
+	this.blades.rotate((Math.PI / 180.0) * this.bladesTheta);
+	this.bladesTheta -= 30;
+	this.base.x = this.x;
+	this.base.y = this.y;
+	this.pointBaseToPlayer();
+}
+
+EnemyChopper.prototype.dead = function() {
+	return this.hp <= 0;
+}
+
+EnemyChopper.prototype.die = function() {
+	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
+	this.world.player.score += this.score;
+}
+
+EnemyChopper.prototype.draw = function(screen) {
+	this.base.draw(screen, this.world.level.x + this.x, this.world.level.y + this.y);
+	this.blades.draw(screen, this.world.level.x + this.x + -1, this.world.level.y + this.y );
+}
+
+EnemyChopper.prototype.pointBaseToPlayer = function() {
+	var px = this.world.player.x;
+	var py = this.world.player.y;
+
+	var A = [px - this.x, py - this.y]; // vector pointing to player
+	var B = [this.x - this.x, (this.y-1) - this.y]; // X-axis
+	this.baseTheta = Vector.theta(A,B);
+	if(px < this.x) {
+		this.baseTheta *= -1;
+	}
+	this.base.rotate(this.baseTheta);
+}
+
+
+
+
+
 function EnemyMegaShip(world, x, y) {
 	Enemy.call(this);
 
@@ -279,6 +295,7 @@ function EnemyMegaShip(world, x, y) {
 	this.y = y;
 	this.hp = 30;
 	this.hpm = 30;
+	this.score += 2500;
 
 	this.shooting = false;
 	this.shootTime = 0;
@@ -296,6 +313,7 @@ EnemyMegaShip.prototype.die = function() {
 	for(var i = 0; i < 500; i++) {
 		this.world.level.events.push(new Explosion(this.world, this.x + Dice.roll(500) - 250, this.y + Dice.roll(500) - 250));
 	}
+	this.world.player.score += this.score;
 }
 
 EnemyMegaShip.prototype.handle = function() {

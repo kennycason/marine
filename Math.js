@@ -10,6 +10,12 @@ Vector = {
 		var cosTheta = A_B/ (AM * BM);
 		return Math.acos(cosTheta);
 	},
+	// A · B = |A||B| cos θ
+	// (A · B) / |A|cos θ = |B|
+	multTheta : function(A, theta) {
+		return [A[0] * Math.cos(theta) - A[1] * Math.sin(theta),
+			    A[0] * Math.sin(theta) + A[1] * Math.cos(theta)];
+	},
 	unit : function(A) {
 		var mag = Math.sqrt(A[0]*A[0] + A[1]*A[1]);
 		A[0] /= mag;

@@ -4,7 +4,9 @@ function Level(level, world) {
 	this.bullets = [];
 	this.ebullets = [];
 	this.events = [];
+	this.effects = [];
 	this.env = [];
+	this.enemies = [];
 
 	if(level == 1) {
 		this.enemies = [
@@ -18,6 +20,10 @@ function Level(level, world) {
 		for(var i = 0; i < 200; i++) {
 			this.enemies.push(new EnemySoldier(world, Dice.roll(6000) - 3000, Dice.roll(6000) - 3000));
 		}
+		this.env = [
+			new Hut1(world, 0, 0),
+			new Hut1(world, 0, -128)
+		];
 	}
 	this.x = 0;
 	this.y = 0;
@@ -29,10 +35,20 @@ function Level(level, world) {
 	this.bg = new Sprite("img/bg.png");
 	this.bg.x = 0;
 	this.bg.y = 0;
+
+	this.playerCollide = new TankCollide(world);
 }
 
 // collide with intraversable entities
 Level.prototype.collide = function(e, ex, ey) {
+	for(var i = 0; i < this.env.length; i++) {
+		if(e.z != this.env[i].z) {
+			continue;
+		}
+		if(this.env[i].collide(e, ex, ey)) {
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -44,7 +60,7 @@ Level.prototype.collideEnemies = function(e, ex, ey) {
 		}
 		if(this.enemies[i].collide(e, ex, ey)) {
 			if(e.m > this.enemies[i].m) {
-				this.enemies[i].hit(new TankCollide(this.world));
+				this.enemies[i].hit(this.playerCollide);
 				continue;
 			}
 			return true;
@@ -140,6 +156,9 @@ Level.prototype.draw = function(screen) {
 	this.drawBackground(screen);
 	for(var i = 0; i < this.env.length; i++) {
 		this.env[i].draw(screen);
+	}
+	for(var i = 0; i < this.effects.length; i++) {
+		this.effects[i].draw(screen);
 	}
 
 	for(var i = 0; i < this.bullets.length; i++) {

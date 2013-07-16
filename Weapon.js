@@ -3,8 +3,8 @@ WeaponTypes.bullet 		= 1;
 WeaponTypes.grenade 	= 2;
 WeaponTypes.missile1 	= 3;
 WeaponTypes.missile2 	= 4;
-WeaponTypes.laser1		= 5;
-WeaponTypes.laser2		= 6;
+WeaponTypes.landmine 	= 5;
+
 
 function Weapon(world) {
 	Entity.call(this);
@@ -237,11 +237,24 @@ Missile2.prototype.handle = function() {
 		if(this.tgt.x < this.x) {
 			this.theta *= -1;
 		}
+/*		var truncate = false;
+		if(this.theta > 0) {
+			this.theta = 15;
+			truncate = true;
+		} else if(this.theta < 0) {
+			this.theta = -15;
+			truncate = true;
+		}*/
+
 		//this.theta += Math.PI;
 		this.sprite.rotate(this.theta);
-		var b = Vector.unit(A);
-		this.v.x = b[0] * this.speed;
-		this.v.y = b[1] * this.speed;
+		
+/*		if(truncate) {
+			v = Vector.multTheta(A, this.theta)
+		}*/
+		var v = Vector.unit(A);
+		this.v.x = v[0] * this.speed;
+		this.v.y = v[1] * this.speed;
 	}
 	this.x += this.v.x;
 	this.y += this.v.y;
@@ -262,4 +275,62 @@ Missile2.prototype.draw = function(screen) {
 
 Missile2.prototype.finish = function() {
 	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
+}
+
+
+
+function LandMine(world) {
+	Weapon.call(this, world);
+
+	var that = this;
+	this.sprite = new Sprite("img/mine.png", function(sprite) {
+	that.w = sprite.width();
+	that.h = sprite.height();	
+	});
+	this.range = 0;
+	this.damage = 3;
+	this.speed = 0;
+	this.startTime = Clock.time();
+	if(this.world.player) {
+		this.locate(this.world.player.x, this.world.player.y);
+		this.orig.x = this.x;
+		this.orig.y = this.y;
+	}
+}
+LandMine.prototype = new Weapon();
+LandMine.prototype.constructor = LandMine;
+
+LandMine.prototype.handle = function() {
+	if(!this.live) {
+		var t = Clock.time() - this.startTime;
+		if(t > 5000) {
+			this.live = true;
+			// this.world.
+		}
+	} else {
+
+		if(this.collide(this.world.player) && this.world.player.z == 0) {
+			this.isFinished = true;
+			this.world.player.hit(this.damage);
+		}
+	}
+
+}
+
+LandMine.prototype.hud = function(screen) {
+	this.sprite.scale(1.4);
+	this.sprite.draw(screen, 570, this.sprite.height() / 2 + 7);
+	screen.drawText(this.world.player.weapons[this.world.player.currentWeapon].ammo, 590, 23, Palette.BLACK, "normal 20px Comic San");
+}
+
+LandMine.prototype.draw = function(screen) {
+	this.sprite.draw(screen, this.x + this.world.level.x, this.y + this.world.level.y);
+}
+
+LandMine.prototype.finish = function() {
+	this.world.level.events.push(new Explosion(this.world, this.x, this.y));
+	this.world.level.events.push(new Explosion(this.world, this.x + Dice.roll(32), this.y));
+	this.world.level.events.push(new Explosion(this.world, this.x - Dice.roll(32), this.y));
+	this.world.level.events.push(new Explosion(this.world, this.x, this.y + Dice.roll(32)));
+	this.world.level.events.push(new Explosion(this.world, this.x, this.y - Dice.roll(32)));
 }
