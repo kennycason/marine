@@ -4,7 +4,7 @@ WeaponTypes.grenade 	= 2;
 WeaponTypes.missile1 	= 3;
 WeaponTypes.missile2 	= 4;
 WeaponTypes.landmine 	= 5;
-
+WeaponTypes.nuke 	= 6;
 
 function Weapon(world) {
 	Entity.call(this);
@@ -237,6 +237,7 @@ Missile2.prototype.handle = function() {
 		if(this.tgt.x < this.x) {
 			this.theta *= -1;
 		}
+		// TODO smooth flight path
 /*		var truncate = false;
 		if(this.theta > 0) {
 			this.theta = 15;
@@ -290,6 +291,7 @@ function LandMine(world) {
 	this.range = 0;
 	this.damage = 3;
 	this.speed = 0;
+	this.z = 0;
 	this.startTime = Clock.time();
 	if(this.world.player) {
 		this.locate(this.world.player.x, this.world.player.y);
@@ -334,3 +336,63 @@ LandMine.prototype.finish = function() {
 	this.world.level.events.push(new Explosion(this.world, this.x, this.y + Dice.roll(32)));
 	this.world.level.events.push(new Explosion(this.world, this.x, this.y - Dice.roll(32)));
 }
+
+
+
+function Nuke(world) {
+	Weapon.call(this, world);
+
+	var that = this;
+	this.sprite = new Sprite("img/nuke.png", function(sprite) {	
+		that.w = sprite.width();
+		that.h = sprite.height();	
+	});
+	this.range = 0;
+	this.damage = 10;
+	this.speed = 0;
+	this.z = 0;
+	this.startTime = Clock.time();
+	if(this.world.player) {
+		this.locate(this.world.player.x, this.world.player.y);
+		this.orig.x = this.x;
+		this.orig.y = this.y;
+	}
+}
+Nuke.prototype = new Weapon();
+Nuke.prototype.constructor = Nuke;
+
+Nuke.prototype.handle = function() {
+	if(!this.live) {
+		var t = Clock.time() - this.startTime;
+		if(t > 3000) {
+			this.isFinished = true;
+			this.w = 700;
+			this.h = 700;
+			for(var i = 0; i < this.world.level.enemies.length; i++) {
+				if(this.world.level.enemies[i].collide(this)) {
+					this.world.level.enemies[i].hit(this);
+				}
+			}
+			if(this.collide(this.world.player)) {
+				this.world.player.hit(this);
+			}
+		}
+	}
+
+}
+
+Nuke.prototype.hud = function(screen) {
+	this.sprite.scale(0.4);
+	this.sprite.draw(screen, 570, this.sprite.height() / 2 -16);
+	screen.drawText(this.world.player.weapons[this.world.player.currentWeapon].ammo, 590, 23, Palette.BLACK, "normal 20px Comic San");
+}
+
+Nuke.prototype.draw = function(screen) {
+	this.sprite.scale(0.4);
+	this.sprite.draw(screen, this.x + this.world.level.x, this.y + this.world.level.y);
+}
+
+Nuke.prototype.finish = function() {
+	this.world.level.events.push(new NukeExplosion(this.world, this.x, this.y));
+}
+

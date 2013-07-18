@@ -31,7 +31,8 @@ function PlayerTank(world) {
 		{type : WeaponTypes.grenade, ammo : 999, obj : new Grenade(this.world)},
 		{type : WeaponTypes.missile1, ammo : 999, obj : new Missile1(this.world)},
 		{type : WeaponTypes.missile2, ammo : 999, obj : new Missile2(this.world)},
-		{type : WeaponTypes.landmine, ammo : 999, obj : new LandMine(this.world)}
+		{type : WeaponTypes.landmine, ammo : 999, obj : new LandMine(this.world)},
+		{type : WeaponTypes.nuke, ammo : 999, obj : new Nuke(this.world)}
 	];
 
 	this.currentWeapon = 0;
@@ -54,12 +55,6 @@ function PlayerTank(world) {
 			}
         }
     });
-	$(document).scroll(function(e) {
-		this.currentWeapon++;
-		if(this.currentWeapon >= this.weapons.length) {
-			this.currentWeapon = 0;
-		}
-	});
 
 	$(document).click(function(e) {
 		switch(e.which) {
@@ -94,6 +89,20 @@ PlayerTank.prototype.hit = function(damage) {
 }
 
 PlayerTank.prototype.handle = function() {
+	this.a.x = 0; 
+	this.a.y = 0;
+	if(this.world.keyboard.isKeyPressed(Keys.LEFT) || this.world.keyboard.isKeyPressed(Keys.A)) {
+		this.a.x = -0.5;
+	}
+	if(this.world.keyboard.isKeyPressed(Keys.RIGHT) || this.world.keyboard.isKeyPressed(Keys.D)) {
+		this.a.x = 0.5;
+	}
+	if(this.world.keyboard.isKeyPressed(Keys.DOWN) || this.world.keyboard.isKeyPressed(Keys.S)) {
+		this.a.y = 0.5;
+	}
+	if(this.world.keyboard.isKeyPressed(Keys.UP) || this.world.keyboard.isKeyPressed(Keys.W)) {
+		this.a.y = -0.5;
+	}
 	if(this.invincible) {
 		if(Clock.time() - this.lastHitTime > 300) {
 			this.invincible = false;
@@ -104,8 +113,32 @@ PlayerTank.prototype.handle = function() {
 			this.hit(1);
 		}
 	}
+
 	this.v.x += this.a.x;
 	this.v.y += this.a.y;
+	var pad = 4; // max speed
+	if(this.v.x > 0) {
+		if(this.world.level.collide(this, this.x + this.v.x + pad, this.y)) {
+			this.v.x = 0;
+			this.a.x = 0;
+		}
+	} else if(this.v.x < 0) {
+		if(this.world.level.collide(this, this.x - this.v.x - pad, this.y)) {
+			this.v.x = 0;
+			this.a.x = 0;
+		}
+	}
+	if(this.v.y > 0) {
+		if(this.world.level.collide(this, this.x, this.y + this.v.y + pad)) {
+			this.v.y = 0;
+			this.a.y = 0;
+		}
+	} else if(this.v.y < 0) {
+		if(this.world.level.collide(this, this.x, this.y - this.v.y - pad)) {
+			this.v.y = 0;
+			this.a.y = 0;
+		}
+	}
 	
 	// limit velocity
 	var lsqr = this.v.x*this.v.x + this.v.y*this.v.y;
@@ -162,6 +195,11 @@ PlayerTank.prototype.fireSecondary = function() {
 			var b = new LandMine(this.world);
 			this.world.level.bullets.push(b);
 			break;
+		case WeaponTypes.nuke:
+			this.weapons[this.currentWeapon].ammo--;
+			var b = new Nuke(this.world);
+			this.world.level.bullets.push(b);
+			break;
 	}
 }
 
@@ -186,13 +224,14 @@ PlayerTank.prototype.pointGunToMouse = function() {
 }
 
 PlayerTank.prototype.pointBase = function(e) {
-	var A = [0 - this.v.x, 0 - this.v.y];
-	var B = [this.v.x - this.v.x, (this.v.y-1) - this.v.y];
-
-	var theta = Vector.theta(A,B);
-	if(0 < this.v.x) {
-		theta *= -1;
+	if(this.v.x != 0 || this.v.y != 0) {
+		var A = [0 - this.v.x, 0 - this.v.y];
+		var B = [this.v.x - this.v.x, (this.v.y-1) - this.v.y];
+		var theta = Vector.theta(A,B);
+		if(0 < this.v.x) {
+			theta *= -1;
+		}
+		theta += Math.PI;
+		this.base.rotate(theta);
 	}
-	theta += Math.PI;
-	this.base.rotate(theta);
 }

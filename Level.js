@@ -17,12 +17,19 @@ function Level(level, world) {
 			new EnemyJet(world, 500, -200),
 			new EnemyMegaShip(world, 800, -500),
 		];
-		for(var i = 0; i < 200; i++) {
+		for(var i = 0; i < 500; i++) {
 			this.enemies.push(new EnemySoldier(world, Dice.roll(6000) - 3000, Dice.roll(6000) - 3000));
 		}
 		this.env = [
 			new Hut1(world, 0, 0),
-			new Hut1(world, 0, -128)
+			new Hut1(world, 0, 428),
+			new Hut1(world, 0, 228),
+			new Hut2(world, 256, 428),
+			new Hut2(world, 456, 428),
+			new Hut2(world, 656, 428),
+			new Hut2(world, 256, 928),
+			new Hut2(world, 456, 928),
+			new Hut2(world, 656, 928),
 		];
 	}
 	this.x = 0;

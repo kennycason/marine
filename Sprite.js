@@ -45,6 +45,11 @@ Sprite.prototype.scale = function(scaling) {
 Sprite.prototype.draw = function(canvas, x, y) {
     var w = this.image.width;
     var h = this.image.height;
+    if((x + w/2 < 0) || (x - w/2 > canvas.width)
+      || (y + h/2 < 0) || (y - h/2 > canvas.height)) {
+        return;
+    }
+
     var context = canvas.context;
     // save state
     context.save();

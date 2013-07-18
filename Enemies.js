@@ -47,6 +47,14 @@ Enemy.prototype.dead = function() {
 	alert('default enemy dead()');
 }
 
+Enemy.prototype.inView = function() {
+    if((this.x + this.world.level.x + this.w/2 < -200) || (this.x + this.world.level.x - this.w/2 > 640 + 200)
+      || (this.y + this.world.level.y + this.h/2 < -200) || (this.y + this.world.level.y - this.h/2 > 480 + 200)) {
+        return false
+    }
+    return true;
+}
+
 
 
 
@@ -93,7 +101,9 @@ EnemySoldier.prototype.die = function() {
 
 EnemySoldier.prototype.handle = function() {
 	Enemy.prototype.handle.call(this);
-
+	if(!this.inView()) {
+		return;
+	}
 	// shoot
 	if(Dice.roll(100) > 98) {
 		this.sprite = this.firing;
@@ -238,6 +248,9 @@ EnemyChopper.prototype.constructor = EnemyChopper;
 
 EnemyChopper.prototype.handle = function() {
 	Enemy.prototype.handle.call(this);
+	if(!this.inView()) {
+		return;
+	}
 
 	this.blades.rotate((Math.PI / 180.0) * this.bladesTheta);
 	this.bladesTheta -= 30;
@@ -318,6 +331,9 @@ EnemyMegaShip.prototype.die = function() {
 
 EnemyMegaShip.prototype.handle = function() {
 	Enemy.prototype.handle.call(this);
+	if(!this.inView()) {
+		return;
+	}
 
 	this.scale += this.ds;
 
