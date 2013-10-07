@@ -375,6 +375,10 @@ Nuke.prototype.handle = function() {
 			}
 			if(this.collide(this.world.player)) {
 				this.world.player.hit(this);
+				if(this.world.player.isDead()) {
+					alert("You have died!");
+					window.location.reload();
+				}
 			}
 		}
 	}

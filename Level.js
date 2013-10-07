@@ -128,6 +128,10 @@ Level.prototype.handle = function() {
 		if(this.world.player.collide(this.ebullets[i])) {
 			this.world.player.hit(this.ebullets[i].damage);
 			finished = true;
+			if(this.world.player.isDead()) {
+				alert("You have died!");
+				window.location.reload();
+			}
 		} else {
 			this.ebullets[i].handle();
 			if(this.ebullets[i].finished()) {

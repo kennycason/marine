@@ -32,7 +32,7 @@ function PlayerTank(world) {
 		{type : WeaponTypes.missile1, ammo : 999, obj : new Missile1(this.world)},
 		{type : WeaponTypes.missile2, ammo : 999, obj : new Missile2(this.world)},
 		{type : WeaponTypes.landmine, ammo : 999, obj : new LandMine(this.world)},
-		{type : WeaponTypes.nuke, ammo : 999, obj : new Nuke(this.world)}
+		// {type : WeaponTypes.nuke, ammo : 999, obj : new Nuke(this.world)}
 	];
 
 	this.currentWeapon = 0;
@@ -87,6 +87,12 @@ PlayerTank.prototype.hit = function(damage) {
 		}
 	}
 }
+
+
+PlayerTank.prototype.isDead = function(damage) {
+	return this.hp <= 0
+}
+
 
 PlayerTank.prototype.handle = function() {
 	this.a.x = 0; 
