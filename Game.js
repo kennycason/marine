@@ -2,32 +2,34 @@ function Game() {
 
 	this.keyboard = new Keyboard();
 	this.mouse = new Mouse();
-
 	this.screen = new Canvas();
-
 	this.player = new PlayerTank(this);
-
 	this.level = new Level(1, this);
 
 	this.paused = false;
-
 	this.gameloopInterval;
 
 	this.run = function() {
 		this.initKeyboard();
 		var that = this;
-		var FPS = 30;
-		window.addEventListener('focus', function() {
-			that.gameloopInterval = setInterval(function() {
-				if(!that.paused) {
-					that.handle();
-					that.draw();	
-				}
-			}, 33);
-		});    
-		window.addEventListener('blur', function() {
-			window.clearInterval(that.gameloopInterval);
-		});
+		var fps = 33;
+		this.gameloopInterval = setInterval(function() {
+			if (!that.paused) {
+				that.handle();
+				that.draw();
+			}
+		}, fps);
+		// window.addEventListener('focus', function() {
+		// 	that.gameloopInterval = setInterval(function() {
+		// 		if(!that.paused) {
+		// 			that.handle();
+		// 			that.draw();
+		// 		}
+		// 	}, 33);
+		// });
+		// window.addEventListener('blur', function() {
+		// 	window.clearInterval(that.gameloopInterval);
+		// });
 	}
 
 	this.handle = function() {
@@ -51,7 +53,7 @@ function Game() {
 				this.altColor = 1;
 				filled = Palette.LIGHT_RED;
 			}
-		} 
+		}
 		for(var i = 0; i < this.player.hpm; i++) {
 			this.screen.drawRect(4 + i * 10, 4, 9, 22, Palette.BLACK);
 			if(this.player.hp > i) {

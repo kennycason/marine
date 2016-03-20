@@ -18,8 +18,8 @@ function PlayerTank(world) {
 	this.x = this.base.x;
 	this.y = this.base.y;
 	this.z = 0;
-	
-	this.gun = new Sprite("img/tank2_gun.png"); 
+
+	this.gun = new Sprite("img/tank2_gun.png");
 
 	this.gunTheta = 0;
 	this.initTheta = 0;
@@ -42,7 +42,7 @@ function PlayerTank(world) {
 	});
 
 	$(document).bind('DOMMouseScroll mousewheel', function(e) {
-        if(e.originalEvent.wheelDelta /120 > 0) {
+        if(e.originalEvent.wheelDelta / 120 > 0) {
             that.currentWeapon++;
 			if(that.currentWeapon >= that.weapons.length) {
 				that.currentWeapon = 0;
@@ -56,20 +56,17 @@ function PlayerTank(world) {
         }
     });
 
-	$(document).click(function(e) {
-		switch(e.which) {
-			case 1: // primary
-				that.firePrimary();
-				break;
-			case 3: // secondary
-				that.fireSecondary();
-				break;
+	$(document).mousedown(function(e) {
+		if (e.which == 1) {  // primary
+			that.firePrimary();
+ 		} else if (e.which == 3) {
+ 			that.fireSecondary();
 		}
 	});
 
 	$(document).bind("contextmenu", function(e){
 	    return false;
-	}); 
+	});
 
 
 }
@@ -95,7 +92,7 @@ PlayerTank.prototype.isDead = function(damage) {
 
 
 PlayerTank.prototype.handle = function() {
-	this.a.x = 0; 
+	this.a.x = 0;
 	this.a.y = 0;
 	if(this.world.keyboard.isKeyPressed(Keys.LEFT) || this.world.keyboard.isKeyPressed(Keys.A)) {
 		this.a.x = -0.5;
@@ -145,7 +142,7 @@ PlayerTank.prototype.handle = function() {
 			this.a.y = 0;
 		}
 	}
-	
+
 	// limit velocity
 	var lsqr = this.v.x*this.v.x + this.v.y*this.v.y;
 	var max = 2*2;
