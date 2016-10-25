@@ -3,17 +3,17 @@ Marines
 
 Play here: http://kennycason.com/marine/
 
-Controls:
-Primary Weapon: Mouse Click (Primary);
-Secondary Weapon: Mouse Click (Secondary);
+### Controls
 
-Movement:
-Move Left: Left, A
-Move Right: Right, D
-Move Up: Up, W
-Move Down: Down, S
-
-Enter: Reset
+| Action | Control |
+|--------|---------|
+| Primary Weapon | Mouse Click (Primary) |
+| Secondary Weapon | Mouse Click (Secondary) |
+| Move Left | Left, A |
+| Move Right | Right, D |
+| Move Up | Up, W |
+| Move Down | Down, S |
+| Enter | Reset |
 
 <img src="/img/screenshots/screenshot1.png?raw=true" width="400px"/>
 <img src="/img/screenshots/screenshot2.png?raw=true" width="400px"/>
