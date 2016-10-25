@@ -15,4 +15,12 @@ Move Down: Down, S
 
 Enter: Reset
 
-<img src="https://raw.github.com/kennycason/marines/master/img/screenshots/screenshot1.png"/>
+<img src="/img/screenshots/screenshot1.png?raw=true" width="400px"/>
+<img src="/img/screenshots/screenshot2.png?raw=true" width="400px"/>
+<img src="/img/screenshots/screenshot3.png?raw=true" width="400px"/>
+<img src="/img/screenshots/screenshot4.png?raw=true" width="400px"/>
+<img src="/img/screenshots/screenshot5.png?raw=true" width="400px"/>
+<img src="/img/screenshots/screenshot6.png?raw=true" width="400px"/>
+<img src="/img/screenshots/screenshot7.png?raw=true" width="400px"/>
+<img src="/img/screenshots/screenshot8.png?raw=true" width="400px"/>
+<img src="/img/screenshots/screenshot9.png?raw=true" width="400px"/>
