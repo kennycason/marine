@@ -1,7 +1,7 @@
 Marines
 =================
 
-Play here: http://ken-soft.com/marines/
+Play here: http://kennycason.com/marine/
 
 Controls:
 Primary Weapon: Mouse Click (Primary);
